@@ -29,20 +29,16 @@ end)
 RegisterNUICallback('spawnVehicle', function(data, cb)
     local spawnCoords = vector3(data.spawnPoint.x, data.spawnPoint.y, data.spawnPoint.z)
     if thisGarage then
-
         if ESX.Game.IsSpawnPointClear(spawnCoords, 2.5) then
             thisGarage = nil
             TriggerServerEvent('esx_garage:updateOwnedVehicle', false, nil, nil, data, spawnCoords)
             TriggerEvent('esx_garage:closemenu')
 
             ESX.ShowNotification(TranslateCap('veh_released'))
-
         else
             ESX.ShowNotification(TranslateCap('veh_block'), 'error')
         end
-
     elseif thisPound then
-
         ESX.TriggerServerCallback('esx_garage:checkMoney', function(hasMoney)
             if hasMoney then
                 if ESX.Game.IsSpawnPointClear(spawnCoords, 2.5) then
@@ -51,7 +47,6 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
 
                     TriggerServerEvent('esx_garage:updateOwnedVehicle', false, nil, nil, data, spawnCoords)
                     TriggerEvent('esx_garage:closemenu')
-
                 else
                     ESX.ShowNotification(TranslateCap('veh_block'), 'error')
                 end
@@ -59,7 +54,6 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
                 ESX.ShowNotification(TranslateCap('missing_money'))
             end
         end, data.exitVehicleCost)
-
     end
 
     cb('ok')
@@ -124,8 +118,8 @@ AddEventHandler('esx_garage:hasEnteredMarker', function(name, part)
     end
 
     if part == 'GetOutPoint' then
-        local pound = Config.Impounds[name]
-        thisPound = pound
+        local impound = Config.Impounds[name]
+        thisPound = impound
 
         ESX.TextUI(TranslateCap('access_Impound'))
     end
@@ -195,7 +189,7 @@ CreateThread(function()
 
             for k, v in pairs(Config.Garages) do
                 if (#(coords - vector3(v.EntryPoint.x, v.EntryPoint.y, v.EntryPoint.z)) <
-                    Config.Markers.EntryPoint.Size.x) then
+                        Config.Markers.EntryPoint.Size.x) then
                     isInMarker = true
                     currentMarker = k
                     currentPart = 'EntryPoint'
@@ -213,7 +207,6 @@ CreateThread(function()
                                             plate = vehicles[i].plate,
                                             props = vehicles[i].vehicle
                                         })
-
                                     end
 
                                     local spawnPoint = {
@@ -225,7 +218,6 @@ CreateThread(function()
 
                                     ESX.TriggerServerCallback('esx_garage:getVehiclesImpounded', function(vehicles)
                                         if next(vehicles) then
-
                                             for i = 1, #vehicles, 1 do
                                                 table.insert(vehiclesImpoundedList, {
                                                     model = GetDisplayNameFromVehicleModel(vehicles[i].vehicle.model),
@@ -242,8 +234,8 @@ CreateThread(function()
                                             SendNUIMessage({
                                                 showMenu = true,
                                                 type = 'garage',
-                                                vehiclesList = {json.encode(vehiclesList)},
-                                                vehiclesImpoundedList = {json.encode(vehiclesImpoundedList)},
+                                                vehiclesList = { json.encode(vehiclesList) },
+                                                vehiclesImpoundedList = { json.encode(vehiclesImpoundedList) },
                                                 poundName = v.ImpoundedName,
                                                 poundSpawnPoint = poundSpawnPoint,
                                                 spawnPoint = spawnPoint,
@@ -260,7 +252,7 @@ CreateThread(function()
                                             SendNUIMessage({
                                                 showMenu = true,
                                                 type = 'garage',
-                                                vehiclesList = {json.encode(vehiclesList)},
+                                                vehiclesList = { json.encode(vehiclesList) },
                                                 spawnPoint = spawnPoint,
                                                 locales = {
                                                     action = TranslateCap('veh_exit'),
@@ -284,7 +276,6 @@ CreateThread(function()
 
                                     ESX.TriggerServerCallback('esx_garage:getVehiclesImpounded', function(vehicles)
                                         if next(vehicles) then
-
                                             for i = 1, #vehicles, 1 do
                                                 table.insert(vehiclesImpoundedList, {
                                                     model = GetDisplayNameFromVehicleModel(vehicles[i].vehicle.model),
@@ -301,7 +292,7 @@ CreateThread(function()
                                             SendNUIMessage({
                                                 showMenu = true,
                                                 type = 'garage',
-                                                vehiclesImpoundedList = {json.encode(vehiclesImpoundedList)},
+                                                vehiclesImpoundedList = { json.encode(vehiclesImpoundedList) },
                                                 poundName = v.ImpoundedName,
                                                 poundSpawnPoint = poundSpawnPoint,
                                                 locales = {
@@ -349,7 +340,7 @@ CreateThread(function()
                                 if owner then
                                     ESX.Game.DeleteVehicle(vehicle)
                                     TriggerServerEvent('esx_garage:updateOwnedVehicle', true, currentMarker, nil,
-                                        {vehicleProps = vehicleProps})
+                                        { vehicleProps = vehicleProps })
                                 else
                                     ESX.ShowNotification(TranslateCap('not_owning_veh'), 'error')
                                 end
@@ -361,7 +352,6 @@ CreateThread(function()
             end
 
             for k, v in pairs(Config.Impounds) do
-
                 if (#(coords - vector3(v.GetOutPoint.x, v.GetOutPoint.y, v.GetOutPoint.z)) < 2.0) then
                     isInMarker = true
                     currentMarker = k
@@ -390,7 +380,7 @@ CreateThread(function()
                                 SendNUIMessage({
                                     showMenu = true,
                                     type = 'impound',
-                                    vehiclesList = {json.encode(vehiclesList)},
+                                    vehiclesList = { json.encode(vehiclesList) },
                                     spawnPoint = spawnPoint,
                                     poundCost = v.Cost,
                                     locales = {
@@ -418,7 +408,6 @@ CreateThread(function()
 
             if isInMarker and not HasAlreadyEnteredMarker or
                 (isInMarker and (LastMarker ~= currentMarker or LastPart ~= currentPart)) then
-
                 if LastMarker ~= currentMarker or LastPart ~= currentPart then
                     TriggerEvent('esx_garage:hasExitedMarker')
                 end
